@@ -48,7 +48,9 @@ module.exports = {
     }),
     new CopyPlugin({
       patterns: [
-        { from: 'public', to: 'public' }
+        { from: 'public', to: 'public' },
+        { from: 'layouts', to: 'layouts' },
+        { from: 'routes', to: 'routes' }
       ],
     }),
     new Dotenv()

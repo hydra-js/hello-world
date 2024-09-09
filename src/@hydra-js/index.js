@@ -5,6 +5,7 @@ var express = require('express');
 var path = require('path');
 var dotenv = require('dotenv');
 var exphbs = require('express-handlebars');
+var fs = require('fs');
 
 var logger = require('./logger');
 
@@ -60,11 +61,23 @@ function bootstrapServer(options) {
     return res.render(req.path.replace(/^\/+/g, ''), { page: page });
   });
 
-  // error handler
+  // Request handler
   app.use((err, req, res, next) => {
-    // @TODO: Implement proper error handling
-    logger.error(err);
-    res.render('404', { page: page });
+    // @TODO: Improve
+    if (err.hasOwnProperty('view')) {
+      const handlerFilePath = path.join(process.cwd(), 'routes', err.view.name + '.js');
+      if (fs.existsSync(handlerFilePath)) {
+        const handler = require('../../routes/' + err.view.name + '.js')();
+        if (handler[req.method.toLowerCase()]) {
+          return handler[req.method.toLowerCase()](req, res, next);
+        } else {
+          return res.render('404', { page: page });
+        }
+      } else {
+        logger.error(err);
+        return res.render('404', { page: page });
+      }
+    }
   });
 
   function startServer() {
