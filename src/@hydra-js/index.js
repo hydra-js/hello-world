@@ -4,18 +4,24 @@
 var express = require('express');
 var path = require('path');
 var dotenv = require('dotenv');
+var exphbs = require('express-handlebars');
+
+var logger = require('./logger');
 
 function bootstrapServer(options) {
   // Load environment variables
   dotenv.config();
 
+  // @TODO: Compose page object with options and route data
+  var page = {
+    title: 'Welcome to Hydra-JS!',
+    description: 'This the welcome page for Hydra-JS application.',
+  };
+
   var app = express();
   var port = options.port || process.env.PORT || 3000;
 
   app.set('port', port);
-
-  // Serve static files from the 'public' directory
-  app.use(express.static(path.join(process.cwd(), 'public')));
 
   // Set security headers
   app.use(function (req, res, next) {
@@ -27,30 +33,43 @@ function bootstrapServer(options) {
     next();
   });
 
+  app.disable('x-powered-by'); // Reduce fingerprinting
+
+  // Set up Handlebars as the view engine
+  app.engine(
+    'html',
+    exphbs.engine({
+      defaultLayout: 'index',
+      layoutsDir: path.join(process.cwd(), 'layouts'),
+      extname: '.html',
+    })
+  );
+  app.set('view engine', 'html');
+  app.set('views', path.join(process.cwd(), 'routes'));
+
   // Allow the main app to initialize routes and middleware
   if (options.init) {
     options.init(app);
   }
 
-  // For any other routes, send the index.html file from the public directory
-  app.get('*', function (req, res, next) {
-    var indexPath = path.join(process.cwd(), 'public/index.html');
-    if (path.extname(req.path).length > 0) {
-      // If the request has a file extension, it's likely a missing asset, so we'll treat it as a 404
-      next();
-    } else {
-      res.sendFile(indexPath);
-    }
+  // Serve static files from the 'public' directory
+  app.use(express.static(path.join(process.cwd(), 'public')));
+
+  app.get('*', function (req, res) {
+    // @TODO: Implement route handling properly
+    return res.render(req.path.replace(/^\/+/g, ''), { page: page });
   });
 
-  // 404 handler
-  app.use(function (req, res) {
-    res.status(404).sendFile(path.join(process.cwd(), 'public/404.html'));
+  // error handler
+  app.use((err, req, res, next) => {
+    // @TODO: Implement proper error handling
+    logger.error(err);
+    res.render('404', { page: page });
   });
 
   function startServer() {
     return app.listen(port, function () {
-      console.log('Server running on port ' + port);
+      logger.log('Server running on port ' + port);
     });
   }
 
