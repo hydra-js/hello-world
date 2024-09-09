@@ -15,13 +15,13 @@ module.exports = {
     filename: 'index.js'
   },
   resolve: {
-    extensions: ['.js']
+    extensions: ['.js', '.jsx']  // Add '.jsx'
   },
   externals: [nodeExternals()],
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(js|jsx)$/,  // Update to include jsx
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
@@ -31,7 +31,8 @@ module.exports = {
                 targets: {
                   node: '14'
                 }
-              }]
+              }],
+              '@babel/preset-react'  // Add this preset
             ]
           }
         }

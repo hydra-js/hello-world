@@ -6,6 +6,9 @@ var path = require('path');
 var dotenv = require('dotenv');
 var exphbs = require('express-handlebars');
 var fs = require('fs');
+var React = require('react');
+var ReactDOMServer = require('react-dom/server');
+var handlebars = require('handlebars');
 
 var logger = require('./logger');
 
@@ -65,19 +68,32 @@ function bootstrapServer(options) {
   app.use((err, req, res, next) => {
     // @TODO: Improve
     if (err.hasOwnProperty('view')) {
-      const handlerFilePath = path.join(process.cwd(), 'routes', err.view.name + '.js');
-      if (fs.existsSync(handlerFilePath)) {
+      // Handle .js files
+      if (fs.existsSync(path.join(process.cwd(), 'routes', err.view.name + '.js'))) {
         const handler = require('../../routes/' + err.view.name + '.js')();
         if (handler[req.method.toLowerCase()]) {
           return handler[req.method.toLowerCase()](req, res, next);
         } else {
           return res.render('404', { page: page });
         }
-      } else {
-        logger.error(err);
-        return res.render('404', { page: page });
+      }
+      // Handle .jsx files
+      if (fs.existsSync(path.join(process.cwd(), 'routes', err.view.name + '.jsx'))) {
+        const reactElement = require('../../routes/' + err.view.name + '.jsx').default;
+        const jsx = React.createElement(reactElement, {});
+        const jsxToHtml = ReactDOMServer.renderToString(jsx);
+
+        const layoutPath = path.join(path.join(process.cwd(), 'layouts', 'index.html'));
+        const withTemplate = handlebars.compile(
+          fs.readFileSync(layoutPath, 'utf8')
+        );
+        const html = withTemplate({ body: jsxToHtml });
+        return res.send(html);
       }
     }
+
+    logger.error(err);
+    return res.render('404', { page: page });
   });
 
   function startServer() {
