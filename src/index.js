@@ -1,4 +1,4 @@
-import { bootstrapServer } from './@hydra-js';
+import { bootstrapServer } from '@hydra-js/core';
 
 const options = {
   port: 3000,
