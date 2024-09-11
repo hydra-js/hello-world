@@ -1,6 +1,6 @@
 import * as React from "react";
 
-export default function App() {
+export default function Tasks() {
   const [times, setTimes] = React.useState(0);
   return (
     <div>
