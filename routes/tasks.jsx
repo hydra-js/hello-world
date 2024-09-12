@@ -1,4 +1,4 @@
-import * as React from "react";
+import { React } from '@hydra-js/core';
 
 export default function Tasks() {
   const [times, setTimes] = React.useState(0);
