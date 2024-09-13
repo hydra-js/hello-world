@@ -13,6 +13,22 @@
   </header>
   <main>
     <p>This the welcome page for Hydra-JS application.</p>
+    <p>This file is placed in public directory, so it will be served as static file.</p>
+    <p>If you want to add more static pages, you can add them in the public directory, and they will be served as static
+      files.</p>
+
+    <p>This file serves for root route (::/), so it will be served as root page.</p>
+
+    <h3>Important Notes</h3>
+    <ol>
+      <li>This file is optional (in case of using only public directory for static files)</li>
+      <li>This file takes precedence over the routes, so if you want to add dynamic content, you should add it in the
+        routes directory, and remove this file.</li>
+      <li>public directory is by default the root directory for static files. You can put any assets in this directory,
+        and they will be served as static files.</li>
+      <li>This file is only used for demonstration purposes. You can remove this file and add your own static files to
+        the public directory.</li>
+    </ol>
   </main>
 </body>
 
