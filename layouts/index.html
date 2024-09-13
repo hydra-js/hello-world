@@ -1,3 +1,26 @@
+<!--
+  This is the master layout file.
+  It is been used to define the root structure of the HTML page.
+  You can use handlebars syntax here
+
+  This file receives page meta through the `page` object.
+  You can add more elements in the layout file to be repeated for all pages.
+  Ex- styles, scripts, header, footer, etc.
+
+  **Important Notes**
+  1. This file must be named as `index.html`
+  2. {{{body}}} is  must to have placeholder in the layout file.
+  3. This file must be placed at `layouts` directory
+  4. This layout has no impact on the pages in public directory.
+  5. This layout file is optional (in case of using only public directory for static files) (Removing isn't possible yet)
+
+  **Future Changes/Improvements**
+  1. Inject global styles in the layout file so that it can be used in all pages (except the pages in public directory  )
+  2. Inject global scripts in the layout file so that it can be used in all pages (except the pages in public directory)
+  3. Add support for Google Analytics out of the box (except the pages in public directory)
+  4. Add validation to check if the layout file is exist and valid or not in build time (in both build script and CLI)
+  5. Make the layout file (with entire directory) optional (in case of using only public directory for static files)
+-->
 <!doctype html>
 <html lang="en">
 
